@@ -1,0 +1,36 @@
+{
+  "name": "simple-mocha-replacement",
+  "version": "0.0.0",
+  "description": "Experimental test runner that aims to be a modern, fast and stable mocha replacement",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/node": "13.7.7",
+    "prettier": "1.19.1",
+    "typescript": "3.8.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -f index.js* index.d.ts*",
+    "prettier": "prettier \"**/*.+(ts|js)\" --write",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelbeumer/simple-mocha-replacement.git"
+  },
+  "author": "Marcel Beumer <marcel@marcelbeumer.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marcelbeumer/simple-mocha-replacement/issues"
+  },
+  "homepage": "https://github.com/marcelbeumer/simple-mocha-replacement#readme",
+  "keywords": [
+    "test",
+    "runner",
+    "mocha",
+    "replace",
+    "simple",
+    "minimal",
+    "fast"
+  ]
+}

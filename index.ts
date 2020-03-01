@@ -41,7 +41,16 @@ type RunSuiteOpts = {
 type InternalState = {
   rootSuite: Suite;
   currentSuite: Suite;
+  reporters: Reporter[];
 };
+
+type ReporterMessage = {};
+
+interface Reporter {
+  (message: ReporterMessage): void;
+}
+
+const defaultReporter: Reporter = () => {};
 
 const createSuite = (): Suite => ({
   name: undefined,
@@ -67,7 +76,8 @@ const createState = (): InternalState => {
   const rootSuite = createSuite();
   return {
     rootSuite,
-    currentSuite: rootSuite
+    currentSuite: rootSuite,
+    reporters: [defaultReporter]
   };
 };
 
@@ -147,6 +157,10 @@ export function afterEach(fn: TestFn) {
 export const suite = describe;
 export const it = test;
 
+const dispatchReporters = (message: ReporterMessage) => {
+  state.reporters.forEach(reporter => reporter(message));
+};
+
 async function getFiles(globs: string[]) {
   const t1 = Date.now();
   const cwd = process.cwd();
@@ -167,7 +181,12 @@ async function collectTests(files: string[]) {
 async function runSuite(suite: Suite, opts: RunSuiteOpts) {
   const isTest = (o: Test | Suite): o is Test => !!(o as Test).fn;
   for await (const beforeSuite of suite.before) {
-    await beforeSuite();
+    try {
+      await beforeSuite();
+    } catch (e) {
+      dispatchReporters({ type: 'beforeHookError' });
+      throw e;
+    }
   }
   const contentsHasOnly = suite.contents.some(content => content.only);
   for await (const content of suite.contents) {
